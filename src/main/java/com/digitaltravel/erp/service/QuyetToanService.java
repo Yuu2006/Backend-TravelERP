@@ -48,8 +48,8 @@ public class QuyetToanService {
     private final ChiTietDatTourRepository chiTietDatTourRepository;
     private final YeuCauHoTroRepository yeuCauHoTroRepository;
 
-    // ── UC47: Danh sách tour cần quyết toán (đã kết thúc, chưa quyết toán)
     @Transactional(readOnly = true)
+    // UC49 - Tra cứu tour cần quyết toán: Lấy tour chờ quyết toán
     public Page<QuyetToanResponse> tourCanQuyetToan(Pageable pageable) {
         try {
             return tourThucTeRepository.timKiem("KET_THUC", null, null, null, pageable)
@@ -66,8 +66,8 @@ public class QuyetToanService {
         }
     }
 
-    // ── UC48: Tính toán sơ bộ (xem trước, không lưu DB) ──────────────────
     @Transactional(readOnly = true)
+    // UC45 - Tính lợi nhuận gộp: Tính doanh thu chi phí
     public QuyetToanResponse tinhToan(String maTour) {
         TourThucTe tour = getKetThucTour(maTour);
         BigDecimal doanhThu = tinhDoanhThu(maTour);
@@ -84,8 +84,8 @@ public class QuyetToanService {
                 .build();
     }
 
-    // ── UC49: Tạo bản nháp quyết toán ────────────────────────────────────
     @Transactional
+    // UC48 - Quyết toán tour: Tạo bản ghi quyết toán
     public QuyetToanResponse taoQuyetToan(String maTour, QuyetToanRequest req, String maTaiKhoan) {
         getKetThucTour(maTour);
 
@@ -124,8 +124,8 @@ public class QuyetToanService {
         return toResponse(qt);
     }
 
-    // ── UC50: Chốt quyết toán ─────────────────────────────────────────────
     @Transactional
+    // UC48 - Quyết toán tour: Chốt hồ sơ quyết toán
     public QuyetToanResponse chotQuyetToan(String maQuyetToan) {
         QuyetToan qt = quyetToanRepository.findById(maQuyetToan)
                 .orElseThrow(() -> AppException.notFound("Khong tim thay quyet toan: " + maQuyetToan));
@@ -143,14 +143,15 @@ public class QuyetToanService {
         return toResponse(qt);
     }
 
-    // ── UC51-53: Xem danh sách / chi tiết ────────────────────────────────
     @Transactional(readOnly = true)
+    // UC48 - Quyết toán tour: Lọc hồ sơ quyết toán
     public Page<QuyetToanResponse> danhSach(String trangThai, Pageable pageable) {
         return quyetToanRepository.findByTrangThai(trangThai, pageable)
                 .map(this::toResponse);
     }
 
     @Transactional(readOnly = true)
+    // UC48 - Quyết toán tour: Xem chi tiết quyết toán
     public QuyetToanResponse chiTiet(String maQuyetToan) {
         QuyetToan qt = quyetToanRepository.findById(maQuyetToan)
                 .orElseThrow(() -> AppException.notFound("Khong tim thay quyet toan: " + maQuyetToan));
@@ -158,6 +159,7 @@ public class QuyetToanService {
     }
 
     @Transactional
+    // UC48 - Quyết toán tour: Yêu cầu bổ sung chứng từ
     public QuyetToanResponse yeuCauBoSung(String maQuyetToan, String noiDung) {
         QuyetToan qt = quyetToanRepository.findById(maQuyetToan)
                 .orElseThrow(() -> AppException.notFound("Khong tim thay quyet toan: " + maQuyetToan));
@@ -172,6 +174,7 @@ public class QuyetToanService {
     }
 
     @Transactional(readOnly = true)
+    // UC48 - Quyết toán tour: Lấy quyết toán cần bổ sung
     public List<QuyetToanResponse> danhSachCanBoSungCuaHdv(String maTaiKhoan) {
         return quyetToanRepository.findChuaQuyetToanTheoHdv(maTaiKhoan).stream()
                 .filter(qt -> dangChoHdvBoSung(qt.getGhiChu()))
@@ -180,6 +183,7 @@ public class QuyetToanService {
     }
 
     @Transactional
+    // UC48 - Quyết toán tour: HDV bổ sung chứng từ
     public QuyetToanResponse hdvBoSung(
             String maTaiKhoan,
             String maQuyetToan,
@@ -205,8 +209,8 @@ public class QuyetToanService {
         return toResponse(qt);
     }
 
-    // ── UC50: KeToan xác nhận đã hoàn tiền cho KH ────────────────────────
     @Transactional
+    // UC50 - Xử lý hoàn tiền: Xác nhận hoàn tiền
     public ThanhToanResponse xacNhanHoanTien(String maGiaoDich, String nguoiXacNhan) {
         GiaoDich gd = giaoDichRepository.findById(maGiaoDich)
                 .orElseThrow(() -> AppException.notFound("Khong tim thay giao dich: " + maGiaoDich));
@@ -254,6 +258,7 @@ public class QuyetToanService {
     }
 
     @Transactional
+    // UC50 - Xử lý hoàn tiền: Từ chối hoàn tiền
     public ThanhToanResponse tuChoiHoanTien(String maGiaoDich, String nguoiXacNhan) {
         GiaoDich gd = giaoDichRepository.findById(maGiaoDich)
                 .orElseThrow(() -> AppException.notFound("Khong tim thay giao dich: " + maGiaoDich));
@@ -291,7 +296,7 @@ public class QuyetToanService {
                 .build();
     }
 
-    // ── UC50: Danh sách giao dịch chờ hoàn tiền ──────────────────────────
+    // UC50 - Xử lý hoàn tiền: Lấy giao dịch chờ hoàn
     public Page<ThanhToanResponse> danhSachChoHoanTien(Pageable pageable) {
         return giaoDichRepository.findChoHoanTien(pageable)
                 .map(gd -> ThanhToanResponse.builder()

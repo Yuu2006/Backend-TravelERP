@@ -50,6 +50,7 @@ public class AuthController {
 
     @PostMapping("/dang-ky")
     @Transactional
+    // UC56 - Đăng ký: Tạo tài khoản khách hàng và hồ sơ số
     public ResponseEntity<ApiResponse<DangNhapResponse>> dangKy(@Valid @RequestBody DangKyRequest request) {
         if (!request.getMatKhau().equals(request.getXacNhanMatKhau())) {
             throw AppException.badRequest("Mật khẩu và xác nhận mật khẩu không khớp");
@@ -105,6 +106,7 @@ public class AuthController {
     }
 
     @PostMapping("/dang-nhap")
+    // UC57 - Đăng nhập: Xác thực người dùng và cấp phiên
     public ResponseEntity<ApiResponse<DangNhapResponse>> dangNhap(@Valid @RequestBody DangNhapRequest request) {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getTenDangNhap(), request.getMatKhau()));
@@ -122,6 +124,7 @@ public class AuthController {
 
     @PostMapping("/doi-mat-khau")
     @PreAuthorize("isAuthenticated()")
+    // UC60 - Đổi mật khẩu: Cập nhật mật khẩu sau xác thực
     public ResponseEntity<ApiResponse<Void>> doiMatKhau(
             @AuthenticationPrincipal TaiKhoanDetails details,
             @Valid @RequestBody DoiMatKhauRequest request) {
@@ -139,6 +142,7 @@ public class AuthController {
 
     @PostMapping("/kiem-tra-mat-khau")
     @PreAuthorize("isAuthenticated()")
+    // UC60 - Đổi mật khẩu: Kiểm tra mật khẩu hiện tại
     public ResponseEntity<ApiResponse<Void>> kiemTraMatKhau(
             @AuthenticationPrincipal TaiKhoanDetails details,
             @RequestBody Map<String, String> request) {
@@ -150,6 +154,7 @@ public class AuthController {
     }
 
     @PostMapping("/quen-mat-khau")
+    // UC59 - Quên mật khẩu: Khởi tạo yêu cầu đặt lại mật khẩu
     public ResponseEntity<ApiResponse<Void>> quenMatKhau(@Valid @RequestBody QuenMatKhauRequest request) {
         TaiKhoan taiKhoan = taiKhoanRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> AppException.notFound("Không tìm thấy tài khoản với email này"));
@@ -159,6 +164,7 @@ public class AuthController {
     }
 
     @PostMapping("/dat-lai-mat-khau")
+    // UC59 - Quên mật khẩu: Lưu mật khẩu mới bằng token
     public ResponseEntity<ApiResponse<Void>> datLaiMatKhau(@Valid @RequestBody DatLaiMatKhauRequest request) {
         if (!request.getMatKhauMoi().equals(request.getXacNhanMatKhau())) {
             throw AppException.badRequest("Mật khẩu mới và xác nhận không khớp");
@@ -173,6 +179,7 @@ public class AuthController {
 
     @PostMapping("/dang-xuat")
     @PreAuthorize("isAuthenticated()")
+    // UC58 - Đăng xuất: Kết thúc phiên người dùng
     public ResponseEntity<ApiResponse<Void>> dangXuat() {
         return ResponseEntity.ok(ApiResponse.noContent("Đăng xuất thành công"));
     }

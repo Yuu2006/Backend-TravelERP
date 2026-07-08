@@ -36,8 +36,8 @@ public class HuyTourService {
     private final YeuCauHoTroRepository yeuCauHoTroRepository;
     private final GiaoDichRepository giaoDichRepository;
 
-    // ── UC32: Khách hàng gửi yêu cầu hủy tour ─────────────────────────────
     @Transactional
+    // UC32 - Hủy tour: Tạo yêu cầu hủy tour
     public YeuCauHoTroResponse yeuCauHuyTour(String maTaiKhoan, String maDatTour, HuyTourRequest request) {
         HoChieuSo kh = hoChieuSoRepository.findByMaTaiKhoan(maTaiKhoan)
                 .orElseThrow(() -> AppException.notFound("Không tìm thấy hồ sơ khách hàng"));
@@ -98,8 +98,8 @@ public class HuyTourService {
         return toResponse(yc, soTienHoan, tiLeHoan);
     }
 
-    // ── UC33: SALES duyệt yêu cầu hủy ────────────────────────────────────
     @Transactional
+    // UC32 - Hủy tour: Duyệt yêu cầu và khởi tạo hoàn tiền
     public YeuCauHoTroResponse duyetHuyTour(String maYeuCau, String maNhanVien, XuLyYeuCauRequest request) {
         YeuCauHoTro yc = yeuCauHoTroRepository.findById(maYeuCau)
                 .orElseThrow(() -> AppException.notFound("Khong tim thay yeu cau: " + maYeuCau));
@@ -124,8 +124,8 @@ public class HuyTourService {
         return toResponse(yc, soTienHoan, 0);
     }
 
-    // ── UC33: SALES từ chối yêu cầu hủy ─────────────────────────────────
     @Transactional
+    // UC32 - Hủy tour: Từ chối yêu cầu hủy
     public YeuCauHoTroResponse tuChoiHuyTour(String maYeuCau, String maNhanVien, XuLyYeuCauRequest request) {
         YeuCauHoTro yc = yeuCauHoTroRepository.findById(maYeuCau)
                 .orElseThrow(() -> AppException.notFound("Khong tim thay yeu cau: " + maYeuCau));
@@ -147,7 +147,7 @@ public class HuyTourService {
         return toResponse(yc, BigDecimal.ZERO, 0);
     }
 
-    // ── Danh sách yêu cầu (cho SALES xem) ───────────────────────────────
+    // UC32 - Hủy tour: Lọc yêu cầu hủy tour
     public Page<YeuCauHoTroResponse> danhSachYeuCau(String loaiYeuCau, String trangThai, Pageable pageable) {
         return yeuCauHoTroRepository.timKiem(loaiYeuCau, trangThai, pageable)
                 .map(yc -> toResponse(yc, BigDecimal.ZERO, 0));

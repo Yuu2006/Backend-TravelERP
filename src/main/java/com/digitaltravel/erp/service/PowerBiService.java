@@ -54,6 +54,7 @@ public class PowerBiService {
 
     private static final DateTimeFormatter DT_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+    // UC51 - Trích xuất dữ liệu phân tích: Liệt kê kho dữ liệu
     public List<PowerBiKhoDuLieuResponse> danhSachKhoDuLieu() {
         return List.of(
                 PowerBiKhoDuLieuResponse.builder()
@@ -84,6 +85,7 @@ public class PowerBiService {
     }
 
     @Transactional
+    // UC51 - Trích xuất dữ liệu phân tích: Cấp thông tin kết nối
     public PowerBiKetNoiResponse layThongTinKetNoi(String maKho, TaiKhoanDetails userDetails) {
         validateMaKho(maKho);
         // Lấy thông tin từ config (tài khoản read-only cố định)
@@ -117,6 +119,7 @@ public class PowerBiService {
     }
 
     @Transactional(readOnly = true)
+    // UC51 - Trích xuất dữ liệu phân tích: Xuất dữ liệu phân tích
     public byte[] xuatDuLieu(XuatDuLieuRequest request, TaiKhoanDetails userDetails) {
         String maKho = request.getMaKho();
         validateMaKho(maKho);
