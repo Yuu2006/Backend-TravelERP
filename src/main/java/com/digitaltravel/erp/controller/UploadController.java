@@ -31,6 +31,7 @@ public class UploadController {
     }
 
     @PostMapping
+    // TODO - Upload tệp đính kèm nghiệp vụ
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         try {
@@ -55,6 +56,7 @@ public class UploadController {
     }
 
     @GetMapping("/files/{fileName:.+}")
+    // TODO - Tải tệp đính kèm nghiệp vụ
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName,
             jakarta.servlet.http.HttpServletRequest request) {
         try {
